@@ -68,45 +68,84 @@ window.findNRooksSolution = function(n) {
 
 
 
-
-
-
-
 window.countNRooksSolutions = function(n) {
   var solutionCount = 0;
-  var newboard = new Board({n: n});
-  if(n === 1) {
+  
+  if (n === 1) {
     solutionCount++;
     return solutionCount;
   }
-
-  var innerFunction = function(takeBoard, callCount) {
-    if(!takeBoard.hasAnyColConflicts() && !takeBoard.hasAnyRowConflicts()) {
-      if (callCount === n) {
-        solutionCount++;
-      } else {
-        for (var i = 0; i < n; i++) {
-          for (var j = 0; j < n; j++) {
-            if (takeBoard.rows()[i][j] === 0) {
-              var boardCopy = new Board({n: n});
-              for (var k = 0; k < n; k++) {
-                var copy = takeBoard.rows()[k].slice();
-                boardCopy.attributes[k] = copy;  
-              }
-              boardCopy.togglePiece(i, j);
-              console.log("original board", takeBoard.rows(), "Copied version", boardCopy.rows()); 
-
-              innerFunction(boardCopy, callCount+ 1);
-            }
-          }
+  var solutionsArray = []; 
+  var innerFunction = function(board, rookCount) {
+    if (rookCount === n) {
+      solutionsArray.push(JSON.stringify(board.rows()));
+      solutionCount++;
+      return solutionCount;
+    }
+    
+    for (var row = 0; row < n; row++) {
+      for (var col = 0; col < n; col++) {
+        if (board.rows()[row][col] === 0) {
+          board.togglePiece(row, col);
+          if (!board.hasAnyRooksConflicts()) {
+            innerFunction(board, (rookCount + 1));
+            board.togglePiece(row, col);
+          } else {
+            board.togglePiece(row, col);
+          }  
+        } else {
+          continue;
         }
       }
     }
   };
-  innerFunction(newboard, 0);
-  console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
-  return solutionCount/n;
+  
+  // for (var i = 0; i < n; i++) {
+  //   for (var j = 0; j < n ; j++){
+      var tempboard = new Board({n: n});
+  //     // tempboard.togglePiece(i, j);
+      innerFunction(tempboard, 0);
+      var unique = _.unique(solutionsArray); 
+  console.log('Number of solutions for ' + n + ' rooks:', unique.length);
+  return unique.length;
 };
+
+
+// window.countNRooksSolutions = function(n) {
+//   var solutionCount = 0;
+//   var newboard = new Board({n: n});
+//   if(n === 1) {
+//     solutionCount++;
+//     return solutionCount;
+//   }
+
+//   var innerFunction = function(takeBoard, callCount, n) {
+//     if(!takeBoard.hasAnyColConflicts() && !takeBoard.hasAnyRowConflicts()) {
+//       if (callCount === n) {
+//         solutionCount++;
+//       } else {
+//         for (var i = 0; i < n; i++) {
+//           for (var j = 0; j < n; j++) {
+//             if (takeBoard.rows()[i][j] === 0) {
+//               var boardCopy = new Board({n: n-1});
+//               for (var k = 0; k < n; k++) {
+//                 var copy = takeBoard.rows()[k].slice();
+//                 boardCopy.attributes[k] = copy;  
+//               }
+//               boardCopy.togglePiece(i, j);
+//               console.log("original board", takeBoard.rows(), "Copied version", boardCopy.rows()); 
+
+//               innerFunction(boardCopy, callCount+ 1);
+//             }
+//           }
+//         }
+//       }
+//     }
+//   };
+//   innerFunction(newboard, 0);
+//   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
+//   return solutionCount;
+// };
 
 
 // window.countNRooksSolutions = function(n) {
