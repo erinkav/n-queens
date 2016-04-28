@@ -191,18 +191,22 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      // debugger;
       var result = 0; 
       var n = this.get('n'); 
       var rowIndex = 0;
-      var colIndex = majorDiagonalColumnIndexAtFirstRow; 
+      var colIndex = minorDiagonalColumnIndexAtFirstRow; 
       for (var i = 0; i < n; i++) {
         // check the i+1 value each time
-        if (this.rows()[rowIndex][colIndex] !== undefined) {
-          result += this.rows()[rowIndex][colIndex];
+        if (rowIndex >= 0 && colIndex >= 0) {
+          if (this.rows()[rowIndex][colIndex] !== undefined) {
+            // console.log("value", this.rows()); 
+            result += this.rows()[rowIndex][colIndex];
+            // console.log("result", result); 
+          }
+          rowIndex++;
+          colIndex--;
         }
-        rowIndex++;
-        colIndex++;
       }
       if (result > 1) {
         return true;
